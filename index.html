@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OPERATION PANCHNAMA | Section 17 PMLA 3D Search Simulator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Three.js Import Map (r164 ESM) -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+<body>
+
+    <!-- 3D WebGL Viewport -->
+    <canvas id="webgl-canvas" aria-label="3D Interactive PMLA Search Premises"></canvas>
+
+    <!-- Center Crosshair & Dynamic 3D Object Tooltip -->
+    <div id="center-reticle"></div>
+    <div id="hover-label" role="status" aria-live="polite">
+        <span class="hl-title" id="hl-title-text">Target Object</span>
+        <span class="hl-status" id="hl-status-text">Click to Inspect</span>
+    </div>
+
+    <!-- ==================================================================
+         PHASE 1: SECTION 17 PMLA SEARCH WARRANT & CONTEXT BRIEFING OVERLAY
+         ================================================================== -->
+    <section id="briefing-overlay" aria-labelledby="warrant-heading">
+        <div class="dossier-container">
+            <div class="stamp-badge">TOP SECRET // SECTION 17(1) PMLA WARRANT</div>
+
+            <header class="ed-header">
+                <div class="ed-crest" aria-hidden="true">ED</div>
+                <div class="ed-title-block">
+                    <h1 id="warrant-heading">Directorate of Enforcement — Operation Panchnama</h1>
+                    <p>Raipur Zonal Office (RPZO) &amp; Panaji Zonal Office (PJZO) | Tactical Search &amp; Seizure Simulation</p>
+                </div>
+            </header>
+
+            <div class="briefing-grid">
+                <div class="briefing-box">
+                    <h3><span>📋</span> Intelligence Dossier &amp; Reasons to Believe</h3>
+                    <p>
+                        Credible financial intelligence analysed by the Zonal Office reveals that <strong>Vikramaditya Singhania</strong> (MD, <em>Mahadev Infra-Mineral &amp; FinTech Pvt. Ltd.</em>) has orchestrated a multi-layered syndicate siphoning <strong>₹540.00 Crore</strong> of Proceeds of Crime (PoC) derived from illegal mineral transport levies, fake input tax invoices, and predicate scheduled offences (FIR No. 112/2026 u/s 120-B, 420, 467, 471 IPC &amp; PC Act).
+                    </p>
+                    <p>
+                        Specific human and cyber intelligence indicates that the key <strong>parallel Tally ledgers, hardware crypto wallets (USDT/BTC), pre-signed shell company cheque books ("Geeta Nagar Cluster"), and unaccounted bullion</strong> are concealed inside his private wood-panelled study at <strong>Villa No. 7, Sovereign Palms, VIP Road, Raipur</strong>.
+                    </p>
+                    <table class="meta-table">
+                        <tbody>
+                            <tr>
+                                <td>ECIR Reference</td>
+                                <td>ECIR/RPZO/09/2026</td>
+                            </tr>
+                            <tr>
+                                <td>Search Authorization</td>
+                                <td>SW/PMLA/RPZO/2026/104 (u/s 17(1) PMLA, 2002)</td>
+                            </tr>
+                            <tr>
+                                <td>Quantified Syndicate PoC</td>
+                                <td style="color: var(--gold-bright);">₹540.00 Crore (Target Attachment)</td>
+                            </tr>
+                            <tr>
+                                <td>Independent Panchas</td>
+                                <td>Shri R.K. Verma (SBI Chief Mgr) &amp; Smt. Sunita Nair (CPWD)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="briefing-box legal-box">
+                    <h3><span>⚖️</span> Statutory Mandate &amp; Mission Objectives</h3>
+                    <ul>
+                        <li><strong>Hunt for 6 Key Exhibits (RUD-01 to RUD-06):</strong> Explore the 3D luxury study room. Some exhibits are openly visible; <strong>2 concealed compartments</strong> (Wall Painting Safe &amp; False Drawer Bottom) require close inspection or <strong>UV Forensic Light [Key F]</strong>.</li>
+                        <li><strong>Take Legally Sound Decisions:</strong> For every discovered exhibit, you must choose the correct statutory and forensic seizure procedure under <strong>Sec 17(1), Sec 17(1A), Sec 22, Sec 50 PMLA</strong> and <strong>Sec 63 Bharatiya Sakshya Adhiniyam (BSA), 2023</strong>.</li>
+                        <li><strong>Protect Admissibility Index:</strong> Flawed procedures (e.g., powering off a live encrypted laptop, failing to transfer VDA to an ED Cold Wallet, or breaking open a lock without Panchas) will slash your <strong>Admissibility Score</strong> and cause PoC loss!</li>
+                        <li><strong>Conclude with Panchnama &amp; Sec 5(1) PAO:</strong> After inspecting the room and confronting the suspect, generate a court-ready Panchnama and Provisional Attachment Order summary.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="protocol-checklist">
+                <label class="protocol-item">
+                    <input type="checkbox" id="chk-warrant" checked />
+                    <span><strong>Step 1:</strong> Section 17(1) Authorization &amp; Reasons to Believe recorded in writing</span>
+                </label>
+                <label class="protocol-item">
+                    <input type="checkbox" id="chk-panchas" checked />
+                    <span><strong>Step 2:</strong> Two Independent Panch Witnesses summoned under Rule 3, PMLA Search Rules</span>
+                </label>
+                <label class="protocol-item">
+                    <input type="checkbox" id="chk-personal" checked />
+                    <span><strong>Step 3:</strong> Personal search of raiding party offered to Occupant before entry</span>
+                </label>
+            </div>
+
+            <div class="briefing-actions">
+                <div class="controls-hint">
+                    <span><kbd class="kbd">Left Drag</kbd> Look / Orbit</span>
+                    <span><kbd class="kbd">WASD</kbd> / <kbd class="kbd">Arrows</kbd> Move Camera</span>
+                    <span><kbd class="kbd">Click Object</kbd> Inspect / Seize</span>
+                    <span><kbd class="kbd">F</kbd> Toggle UV Forensic Beam</span>
+                    <span><kbd class="kbd">1-5</kbd> Quick Room Zones</span>
+                </div>
+                <button type="button" class="btn-primary" id="btn-enter-house">
+                    <span>⚡ EXECUTE WARRANT &amp; ENTER PREMISES</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================================================================
+         PHASE 2: TACTICAL IN-GAME HUD OVERLAY
+         ================================================================== -->
+    <div id="hud-layer">
+        <!-- Top Status Bar -->
+        <header class="hud-topbar hud-interactive">
+            <div class="hud-brand">
+                <div class="live-dot" title="Live Search Operation Active"></div>
+                <div>
+                    <div class="hud-title">OPERATION PANCHNAMA // SEC 17 PMLA SEARCH</div>
+                    <div class="hud-subtitle">ECIR/RPZO/09/2026 • Villa No. 7, Sovereign Palms • Panchas Present</div>
+                </div>
+            </div>
+
+            <div class="hud-metrics">
+                <div class="metric-pill">
+                    <span class="metric-label">Exhibits Processed</span>
+                    <span class="metric-value cyan" id="hud-exhibits-count">0 / 6</span>
+                </div>
+                <div class="metric-pill">
+                    <span class="metric-label">PoC Secured / Frozen</span>
+                    <span class="metric-value gold" id="hud-poc-amount">₹0.00 Cr / ₹540 Cr</span>
+                </div>
+                <div class="metric-pill">
+                    <span class="metric-label">Legal Admissibility Index</span>
+                    <span class="metric-value emerald" id="hud-legality-score">100%</span>
+                </div>
+                <button type="button" class="btn-secondary" id="btn-show-briefing" title="Review Warrant Briefing">
+                    📄 Warrant
+                </button>
+            </div>
+        </header>
+
+        <!-- Middle Sidebars -->
+        <div class="hud-middle">
+            <!-- Left Navigation & Forensic Tools -->
+            <aside class="hud-sidebar-left hud-interactive">
+                <div class="hud-card">
+                    <div class="hud-card-title">
+                        <span>🎥 Room Camera Zones</span>
+                        <span style="color: var(--text-muted); font-size:0.65rem;">[Keys 1-5]</span>
+                    </div>
+                    <div class="zone-buttons">
+                        <button type="button" class="zone-btn active" data-zone="overview">1. Overview</button>
+                        <button type="button" class="zone-btn" data-zone="desk">2. Exec Desk</button>
+                        <button type="button" class="zone-btn" data-zone="vault">3. Wall &amp; Safe</button>
+                        <button type="button" class="zone-btn" data-zone="lounge">4. Credenza</button>
+                        <button type="button" class="zone-btn" data-zone="server" style="grid-column: span 2;">5. East Server &amp; Shredder Alcove</button>
+                    </div>
+                </div>
+
+                <div class="hud-card">
+                    <div class="hud-card-title">
+                        <span>🔬 Forensic Gadget Kit</span>
+                    </div>
+                    <div class="tool-toggles">
+                        <button type="button" class="tool-btn" id="btn-uv-light">
+                            <span>🔦 UV Latent Trace Beam</span>
+                            <kbd class="kbd">F</kbd>
+                        </button>
+                        <button type="button" class="tool-btn" id="btn-scanner-pulse">
+                            <span>📡 PMLA Intel Pulse (Highlight)</span>
+                            <kbd class="kbd">H</kbd>
+                        </button>
+                        <button type="button" class="tool-btn" id="btn-confront-suspect">
+                            <span>⚖️ Sec 50 Spot Examination</span>
+                            <span id="badge-sec50" style="font-size:0.68rem; color:var(--gold-bright);">Pending</span>
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Right Evidence Log & Panchnama Builder -->
+            <aside class="hud-sidebar-right hud-interactive">
+                <div class="hud-card">
+                    <div class="hud-card-title">
+                        <span>📦 Seizure &amp; RUD Inventory</span>
+                        <span id="rud-progress-tag" style="color: var(--gold-bright);">In Progress</span>
+                    </div>
+                    <div class="evidence-list" id="hud-evidence-list">
+                        <!-- Dynamically populated by app.js -->
+                    </div>
+                    <div style="margin-top: 0.85rem; display: flex; flex-direction: column; gap: 0.45rem;">
+                        <button type="button" class="btn-primary" id="btn-conclude-search" style="width: 100%; justify-content: center; padding: 0.65rem 1rem; font-size: 0.8rem;">
+                            📜 Seal Premises &amp; Generate Panchnama
+                        </button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Bottom Telemetry Feed -->
+        <footer class="hud-bottombar hud-interactive">
+            <div class="toast-feed" id="hud-toast">
+                <span>🟢</span>
+                <span id="hud-toast-text">Search Party entered Villa No. 7 with 2 independent Panchas. Orbit camera or click any highlighted object to inspect.</span>
+            </div>
+            <div class="controls-hint">
+                <span><kbd class="kbd">Drag</kbd> Orbit 3D</span>
+                <span><kbd class="kbd">Scroll</kbd> Zoom</span>
+                <span><kbd class="kbd">F</kbd> UV Light</span>
+                <span><kbd class="kbd">H</kbd> Intel Pulse</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ==================================================================
+         NATIVE <DIALOG> 1: EVIDENCE INSPECTION & STATUTORY DECISION MODAL
+         ================================================================== -->
+    <dialog id="evidence-modal" class="ed-modal" closedby="any" aria-labelledby="ev-modal-title">
+        <div class="modal-header">
+            <div>
+                <span class="modal-tag" id="ev-modal-category">EXHIBIT RUD-01 // DIGITAL FORENSICS</span>
+                <h2 id="ev-modal-title">Exhibit Title</h2>
+            </div>
+            <button type="button" class="modal-close-btn" id="btn-close-ev-modal" aria-label="Close modal">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="evidence-context-box">
+                <p id="ev-modal-desc"></p>
+            </div>
+            <div class="forensic-readout" id="ev-modal-readout"></div>
+
+            <div id="ev-decision-container">
+                <div class="decision-prompt-title">⚡ Select Authorized Officer Action (PMLA / BSA Protocol):</div>
+                <div class="decision-options" id="ev-modal-options"></div>
+            </div>
+
+            <div class="decision-feedback" id="ev-modal-feedback"></div>
+
+            <div style="margin-top: 1.25rem; display: flex; justify-content: flex-end; gap: 0.75rem;">
+                <button type="button" class="btn-secondary" id="btn-ev-continue">Return to 3D Search Room</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- ==================================================================
+         NATIVE <DIALOG> 2: SECTION 50 PMLA SPOT CONFRONTATION MODAL
+         ================================================================== -->
+    <dialog id="confront-modal" class="ed-modal" closedby="any" aria-labelledby="confront-modal-title">
+        <div class="modal-header">
+            <div>
+                <span class="modal-tag">SECTION 50(2) &amp; (3) PMLA // PRELIMINARY STATEMENT</span>
+                <h2 id="confront-modal-title">Spot Examination of Occupant Vikramaditya Singhania</h2>
+            </div>
+            <button type="button" class="modal-close-btn" id="btn-close-confront-modal" aria-label="Close modal">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="evidence-context-box">
+                <p id="confront-question-text"></p>
+            </div>
+            <div class="decision-options" id="confront-options"></div>
+            <div class="decision-feedback" id="confront-feedback"></div>
+            <div style="margin-top: 1.25rem; display: flex; justify-content: flex-end;">
+                <button type="button" class="btn-secondary" id="btn-confront-done">Close Examination</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- ==================================================================
+         NATIVE <DIALOG> 3: FINAL PANCHNAMA & SEC 5(1) PAO DOSSIER MODAL
+         ================================================================== -->
+    <dialog id="dossier-modal" class="ed-modal wide-modal" closedby="any" aria-labelledby="dossier-modal-title">
+        <div class="modal-header">
+            <div>
+                <span class="modal-tag">POST-SEARCH STATUTORY FILING // SECTION 17 &amp; SECTION 5(1) PMLA</span>
+                <h2 id="dossier-modal-title">Official Seizure Panchnama &amp; Provisional Attachment Evaluation</h2>
+            </div>
+            <button type="button" class="modal-close-btn" id="btn-close-dossier-modal" aria-label="Close modal">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="score-banner">
+                <div class="score-card">
+                    <span class="sc-val" id="final-poc-val">₹0 Cr</span>
+                    <span class="sc-lbl">PoC Secured / Frozen</span>
+                </div>
+                <div class="score-card">
+                    <span class="sc-val" id="final-legality-val">100%</span>
+                    <span class="sc-lbl">Admissibility Index</span>
+                </div>
+                <div class="score-card">
+                    <span class="sc-val" id="final-ruds-val">0 / 6</span>
+                    <span class="sc-lbl">RUDs Seized</span>
+                </div>
+                <div class="score-card">
+                    <span class="sc-val" id="final-grade-val">S-RANK</span>
+                    <span class="sc-lbl">Adjudicating Auth Rating</span>
+                </div>
+            </div>
+
+            <div class="evidence-context-box">
+                <p id="final-verdict-summary"></p>
+            </div>
+
+            <div class="decision-prompt-title">📜 Generated Section 17 PMLA Search Panchnama &amp; Sec 8 Reasons to Believe Draft:</div>
+            <div class="panchnama-preview-card" id="panchnama-text-output"></div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
+                <div style="display: flex; gap: 0.75rem;">
+                    <button type="button" class="btn-primary" id="btn-copy-panchnama">📋 Copy Official Panchnama Draft</button>
+                    <button type="button" class="btn-secondary" id="btn-reset-game">🔄 Replay Operation</button>
+                </div>
+                <button type="button" class="btn-secondary" id="btn-dossier-return">Continue Inspecting Room</button>
+            </div>
+        </div>
+    </dialog>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
